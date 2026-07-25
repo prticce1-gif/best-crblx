@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Roblox Condo"
+version = "1.0.0"
+id = "artifacts/roblox-condo"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23759
+
+[services.development]
+run = "pnpm --filter @workspace/roblox-condo run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/roblox-condo", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/roblox-condo/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23759"
+BASE_PATH = "/"
