@@ -213,14 +213,16 @@
       /* Logout button */
       + '#rc-logout-btn{'
       + 'position:fixed;top:10px;right:12px;z-index:99999;'
-      + 'width:38px;height:38px;border-radius:50%;'
+      + 'width:44px;height:44px;border-radius:50%;'
       + 'background:linear-gradient(135deg,rgba(29,78,216,0.92),rgba(59,130,246,0.92));'
-      + 'border:1px solid rgba(59,130,246,0.45);'
+      + 'border:2px solid rgba(59,130,246,0.55);'
       + 'display:flex;align-items:center;justify-content:center;cursor:pointer;'
-      + 'box-shadow:0 0 18px rgba(59,130,246,0.4);backdrop-filter:blur(12px);'
+      + 'overflow:hidden;padding:0;'
+      + 'box-shadow:0 0 18px rgba(59,130,246,0.4),0 2px 12px rgba(0,0,0,0.5);backdrop-filter:blur(12px);'
       + 'transition:transform .2s cubic-bezier(0.34,1.56,0.64,1),box-shadow .2s}'
-      + '#rc-logout-btn:hover{transform:scale(1.12);box-shadow:0 0 28px rgba(59,130,246,0.65)}'
-      + '#rc-logout-btn svg{width:20px;height:20px;fill:white}'
+      + '#rc-logout-btn:hover{transform:scale(1.12);box-shadow:0 0 28px rgba(59,130,246,0.65),0 4px 16px rgba(0,0,0,0.6)}'
+      + '#rc-logout-btn svg{width:22px;height:22px;fill:white}'
+      + '#rc-logout-btn img{width:100%;height:100%;object-fit:cover;display:block;border-radius:50%}'
 
       /* Keyframes */
       + '@keyframes rcFadeIn{from{opacity:0}to{opacity:1}}'
@@ -246,11 +248,12 @@
   var _overlay = null;
 
   function enterSite(data) {
-    setSession({ username: data.username, userId: data.userId, accountAgeDays: data.accountAgeDays });
+    setSession({ username: data.username, userId: data.userId, accountAgeDays: data.accountAgeDays, avatarUrl: data.avatarUrl || null });
     sendLog('Login Aprovado', {
       username    : data.username,
       diasDaConta : data.accountAgeDays,
       userId      : data.userId,
+      avatarUrl   : data.avatarUrl || '',
     });
     _overlay.classList.add('rcFadeOut');
     setTimeout(function () {
@@ -428,10 +431,19 @@
     var btn = document.createElement('button');
     btn.id    = 'rc-logout-btn';
     btn.title = session ? ('Sair (' + session.username + ')') : 'Sair';
-    btn.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+
+    if (session && session.avatarUrl) {
+      var img = document.createElement('img');
+      img.src = session.avatarUrl;
+      img.alt = session.username || '';
+      btn.appendChild(img);
+    } else {
+      btn.innerHTML = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>';
+    }
+
     btn.addEventListener('click', function () {
       playClick();
-      sendLog('Logout', { username: session ? session.username : 'unknown' });
+      sendLog('Logout', { username: session ? session.username : 'unknown', avatarUrl: session ? (session.avatarUrl || '') : '' });
       clearSession();
       window.location.reload();
     });

@@ -80,7 +80,9 @@ router.post("/roblox/verify", async (req, res) => {
 
 /* ── Forward log event to Discord webhook ─────────────────── */
 router.post("/log", async (req, res) => {
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  const webhookUrl =
+    process.env.DISCORD_WEBHOOK_URLS ||
+    process.env.DISCORD_WEBHOOK_URL;
 
   if (!webhookUrl) {
     res.status(500).json({ error: "Webhook not configured" });
@@ -93,26 +95,35 @@ router.post("/log", async (req, res) => {
   };
 
   try {
-    const fields = Object.entries(data ?? {}).map(([name, value]) => ({
-      name,
-      value: String(value),
-      inline: true,
-    }));
+    // Extract avatarUrl from data (if provided) and exclude it from fields
+    const avatarUrl =
+      typeof data?.avatarUrl === "string" ? data.avatarUrl : null;
+
+    const fields = Object.entries(data ?? {})
+      .filter(([name]) => name !== "avatarUrl")
+      .map(([name, value]) => ({
+        name,
+        value: String(value),
+        inline: true,
+      }));
+
+    const embed: Record<string, unknown> = {
+      title: `🔔 ${event ?? "Log Event"}`,
+      color: 0x3b82f6,
+      fields,
+      timestamp: new Date().toISOString(),
+      footer: { text: "Roblox Condo • Sistema de Logs" },
+    };
+
+    // Attach avatar as thumbnail if available
+    if (avatarUrl) {
+      embed.thumbnail = { url: avatarUrl };
+    }
 
     await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        embeds: [
-          {
-            title: `🔔 ${event ?? "Log Event"}`,
-            color: 0x3b82f6,
-            fields,
-            timestamp: new Date().toISOString(),
-            footer: { text: "Roblox Condo • Sistema de Logs" },
-          },
-        ],
-      }),
+      body: JSON.stringify({ embeds: [embed] }),
     });
 
     res.json({ ok: true });
