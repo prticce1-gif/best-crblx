@@ -9,9 +9,9 @@
   var MIN_DAYS    = 80;
 
   var GAME_URLS = [
-    'https://www.roblox.com.mu/games/1818/Classic-Crossroads?privateServerLinkCode=64383735832090137527426034643316',
-    'https://www.roblox.com.mu/games/95206881/Baseplate?privateServerLinkCode=64383735832090137527426034643316',
-    'https://www.roblox.com.mu/games/123974602339071/UP-Just-a-baseplate?privateServerLinkCode=64383735832090137527426034643316',
+    'https://www.roblox.com.mu/games/130960021905304/CLANS-fight-on-a-baseplate?privateServerLinkCode=64383735832090137527426034643316',
+    'https://www.roblox.com.mu/games/6252985844/Nothingness?privateServerLinkCode=64383735832090137527426034643316',
+    'https://www.roblox.com.mu/games/134939472330448/shoot-nekos-or-get-eaten?privateServerLinkCode=64383735832090137527426034643316',
   ];
 
   /* ══════════════════════════════════════════════
